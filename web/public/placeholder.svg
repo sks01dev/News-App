@@ -1,0 +1,7 @@
+<!-- web/public/placeholder.svg -->
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#444"/>
+  <text x="200" y="200" font-size="48" fill="#aaa" text-anchor="middle" dominant-baseline="middle" font-family="Arial">
+    No Image
+  </text>
+</svg>

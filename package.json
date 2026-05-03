@@ -1,0 +1,26 @@
+{
+  "name": "news-app",
+  "version": "1.0.0",
+  "description": "Modern news app with React + Vite frontend and Express proxy backend",
+  "private": true,
+  "scripts": {
+    "server:install": "cd server && npm install",
+    "web:install": "cd web && npm install",
+    "server:dev": "cd server && npm run dev",
+    "web:dev": "cd web && npm run dev",
+    "dev": "npm run web:install && npm run server:install && concurrently \"npm run server:dev\" \"npm run web:dev\"",
+    "build:web": "cd web && npm run build",
+    "build": "npm run build:web"
+  },
+  "keywords": [
+    "news",
+    "react",
+    "vite",
+    "express"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
