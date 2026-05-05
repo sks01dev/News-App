@@ -1,21 +1,40 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const helmet = require("helmet");
 
 const app = express();
 const PORT = process.env.PORT || 5177;
 const TOKEN = process.env.THENEWSAPI_TOKEN;
 
-// Middleware
-app.use(cors());
-app.use(express.json());
-
-// Validate token at startup
+// Validate required environment variables
 if (!TOKEN) {
+  console.error("❌ THENEWSAPI_TOKEN is required. Please set it in .env file.");
+  process.exit(1);
+}
+
+if (TOKEN.length < 10) {
   console.warn(
-    "⚠️  THENEWSAPI_TOKEN not set in .env. The /api/news/all endpoint will fail.",
+    "⚠️  THENEWSAPI_TOKEN seems too short. Please verify it's correct.",
   );
 }
+
+// Middleware
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:", "https:"],
+        connectSrc: ["'self'", "https://api.thenewsapi.com"],
+      },
+    },
+  }),
+);
+app.use(cors());
+app.use(express.json());
 
 // Health check
 app.get("/api/health", (req, res) => {

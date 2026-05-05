@@ -9,6 +9,8 @@ interface HeadlinesListProps {
   isLoading: boolean;
   articles: Article[];
   totalFound: number;
+  favorites: Set<string>;
+  onToggleFavorite: (article: Article) => void;
 }
 
 export const HeadlinesList: React.FC<HeadlinesListProps> = ({
@@ -19,20 +21,12 @@ export const HeadlinesList: React.FC<HeadlinesListProps> = ({
   isLoading,
   articles,
   totalFound,
+  favorites,
+  onToggleFavorite,
 }) => {
-  const [favorites, setFavorites] = useState<Set<string>>(() => {
-    const saved = localStorage.getItem("favorites");
-    return new Set(saved ? JSON.parse(saved) : []);
-  });
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const limit = 3;
-  const totalPages = Math.ceil(totalFound / limit) || 1;
-
-  // Save favorites to localStorage
-  useEffect(() => {
-    localStorage.setItem("favorites", JSON.stringify(Array.from(favorites)));
-  }, [favorites]);
+  const totalPages = articles.length || 1;
 
   // Handle transitions when articles change
   useEffect(() => {
@@ -40,41 +34,6 @@ export const HeadlinesList: React.FC<HeadlinesListProps> = ({
     const timer = setTimeout(() => setIsTransitioning(false), 300);
     return () => clearTimeout(timer);
   }, [articles]);
-
-  // Prefetch logic
-  useEffect(() => {
-    const currentIndex = articles.length > 0 ? 0 : 0;
-
-    // Prefetch next page when viewing 2nd article (index 1)
-    if (currentIndex === 1 && page < totalPages) {
-      newsApi.prefetch({
-        page: page + 1,
-        categories: search ? undefined : categories,
-        search: search || undefined,
-      });
-    }
-
-    // Prefetch previous page when at first article and not on page 1
-    if (currentIndex === 0 && page > 1) {
-      newsApi.prefetch({
-        page: page - 1,
-        categories: search ? undefined : categories,
-        search: search || undefined,
-      });
-    }
-  }, [page, articles.length, totalPages, categories, search]);
-
-  const toggleFavorite = (uuid: string) => {
-    setFavorites((prev) => {
-      const updated = new Set(prev);
-      if (updated.has(uuid)) {
-        updated.delete(uuid);
-      } else {
-        updated.add(uuid);
-      }
-      return updated;
-    });
-  };
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -110,9 +69,10 @@ export const HeadlinesList: React.FC<HeadlinesListProps> = ({
     );
   }
 
-  const article = articles[0];
+  const currentIndex = Math.min(Math.max(page - 1, 0), articles.length - 1);
+  const article = articles[currentIndex] || articles[0];
   const imageUrl = article?.image_url || "/placeholder.svg";
-  const isFavorite = favorites.has(article?.uuid);
+  const isFavorite = favorites.has(article?.uuid || "");
 
   return (
     <div className="headlines-container">
@@ -145,7 +105,7 @@ export const HeadlinesList: React.FC<HeadlinesListProps> = ({
           <div className="article-actions">
             <button
               className={`btn-favorite ${isFavorite ? "active" : ""}`}
-              onClick={() => toggleFavorite(article.uuid)}
+              onClick={() => onToggleFavorite(article)}
               title={isFavorite ? "Remove from favorites" : "Add to favorites"}
             >
               {isFavorite ? "❤️" : "🤍"} Save to Favorites
@@ -182,9 +142,8 @@ export const HeadlinesList: React.FC<HeadlinesListProps> = ({
           </button>
 
           <div className="pager-numbers">
-            {Array.from({ length: Math.min(3, totalPages) }).map((_, i) => {
-              const pageNum = page + (i - 1);
-              if (pageNum < 1 || pageNum > totalPages) return null;
+            {Array.from({ length: totalPages }).map((_, i) => {
+              const pageNum = i + 1;
               return (
                 <button
                   key={pageNum}

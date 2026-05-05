@@ -1,79 +1,138 @@
-// README.md
+# News App
 
-# 📰 News App
+A polished news aggregator built with React, TypeScript, Vite, and Express. This application delivers fast headlines, searchable categories, favorites, offline caching, and a mobile-friendly reading experience.
 
-A modern, performant news application built with React + Vite (frontend) and Node.js/Express (backend).
+## Key Features
 
-## Features
+- **Live news feed** using TheNewsApi
+- **Search and category browsing** for tech, business, sports, health, science, and entertainment
+- **Favorites management** for saved stories
+- **Responsive design** optimized for desktop and mobile
+- **Offline-ready** caching with a service worker
+- **Secure API proxy** to keep the news token off the client
+- **Accessible UI** with ARIA labels and keyboard-friendly controls
 
-✨ **Modern UI**
+## Tech Stack
 
-- Flipboard-like single-article view with beautiful dark theme
-- Responsive design (desktop sidebar + mobile toggle)
-- Smooth animations and transitions
-- Accessibility-first approach (semantic HTML, ARIA labels, alt text)
+- Frontend: `React 18`, `TypeScript`, `Vite`
+- Backend: `Node.js`, `Express`, `dotenv`, `helmet`, `cors`
+- Styling: modern responsive CSS
+- API: `TheNewsApi`
+- Dev tooling: `concurrently`
 
-🔍 **Smart Filtering**
+## Quick Start
 
-- 10 news categories (tech, general, science, sports, business, health, entertainment, politics, food, travel)
-- Full-text search capability
-- Default category: tech
-- Clear visual feedback for active filters
+### Prerequisites
 
-📄 **Intelligent Pagination**
+- Node.js 18+
+- npm
+- TheNewsApi account and API key
 
-- One article per page (Flipboard-style)
-- Circular pager with first/prev/next navigation
-- Page numbers displayed (up to 3 visible)
-- Prefetching next/prev pages for instant transitions
+### Setup
 
-💾 **Caching & Performance**
+1. Clone the repository:
 
-- In-memory page caching (5-minute TTL)
-- Automatic prefetch when reaching 2nd or last article
-- No flashing when swapping cached pages
-- Instant back-navigation to cached results
+   ```bash
+   git clone https://github.com/yourusername/news-app.git
+   cd News-App
+   ```
 
-❤️ **Favorites**
+2. Copy the server environment sample:
 
-- Toggle "Save to Favorites" on articles
-- Persistent storage in localStorage
-- Dedicated favorites sidebar view
-- Seamless return to live news
+   ```bash
+   cp server/.env.example server/.env
+   ```
 
-🔐 **Security**
+3. Add your API token in `server/.env`:
 
-- Express proxy hides API tokens from browser
-- All requests logged without exposing secrets
-- `.env` contains tokens, never committed
+   ```env
+   THENEWSAPI_TOKEN=your_token_here
+   ```
+
+4. Start the app:
+
+   ```bash
+   npm run dev
+   ```
+
+5. Open the frontend in your browser:
+
+   ```text
+   http://localhost:5176
+   ```
+
+## Available Scripts
+
+From the repository root:
+
+- `npm run dev` - Install dependencies and start both frontend and backend
+- `npm run web:install` - Install frontend dependencies only
+- `npm run server:install` - Install backend dependencies only
+- `npm run web:dev` - Start the Vite frontend only
+- `npm run server:dev` - Start the Express backend only
+- `npm run build` - Build the frontend for production
 
 ## Project Structure
 
 ```
 News-App/
-├── package.json              # Root scripts (dev, build)
-├── .gitignore               # Git ignore rules
-├── server/
-│   ├── package.json         # Backend dependencies
-│   ├── server.js            # Express proxy server
-│   ├── .env.example         # Environment template
-│   └── README.md            # Backend documentation
-└── web/
-    ├── package.json         # Frontend dependencies
-    ├── vite.config.ts       # Vite configuration with proxy
-    ├── tsconfig.json        # TypeScript config
-    ├── index.html           # HTML entry point
-    ├── src/
-    │   ├── main.tsx         # React entry point
-    │   ├── App.tsx          # Main app component
-    │   ├── styles.css       # Global styles
-    │   ├── lib/
-    │   │   └── newsapi.ts   # API client with caching
-    │   └── components/
-    │       └── HeadlinesList.tsx  # Article display component
-    └── public/
-        └── placeholder.svg  # Fallback image
+├── package.json            # Root scripts and dev dependencies
+├── package-lock.json       # Lockfile
+├── .gitignore
+├── server/                 # Express backend proxy
+│   ├── package.json
+│   ├── server.js
+│   └── .env.example
+└── web/                    # React frontend
+    ├── package.json
+    ├── vite.config.ts
+    ├── tsconfig.json
+    ├── index.html
+    ├── public/
+    └── src/
+        ├── main.tsx
+        ├── App.tsx
+        ├── styles.css
+        ├── lib/
+        │   └── newsapi.ts
+        └── components/
+            └── HeadlinesList.tsx
 ```
+
+## API Configuration
+
+The frontend requests news through the backend proxy so your API token is not exposed in the browser. Configure your token in `server/.env`:
+
+```env
+THENEWSAPI_TOKEN=your_token_here
+```
+
+## Production Build
+
+Build the frontend assets with:
+
+```bash
+npm run build
+```
+
+The generated production assets are written to `web/dist/`.
+
+## Deployment Notes
+
+- Deploy the backend separately and update the frontend proxy if needed.
+- For frontend-only hosting, build the app and serve `web/dist/`.
+- Keep the `.env` file private and never commit your API token.
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Open a pull request
+
+## License
+
+MIT License
 
 ## Quick Start
 
